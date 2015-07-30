@@ -37,7 +37,29 @@ def quaternion_to_rotation_matrix(q):
         A 3x3 rotation matrix, or an array of such matrices.
     """
 
+    q = np.array(q)
+    _initial_ndim = q.ndim
     q = np.atleast_2d(q)
+    qw,qx,qy,qz = q.T
 
-    # number of dimensions
-    k = q.shape[-1]
+    # number of input quaternions
+    n = q.shape[0]
+
+    R = np.zeros((n,3,3))
+
+    R[:,0,0] = 1 - 2*qy**2 - 2*qz**2
+    R[:,0,1] = 2*qx*qy - 2*qz*qw
+    R[:,0,2] = 2*qx*qz + 2*qy*qw
+
+    R[:,1,0] = 2*qx*qy + 2*qz*qw
+    R[:,1,1] = 1 - 2*qx**2 - 2*qz**2
+    R[:,1,2] = 2*qy*qz - 2*qx*qw
+
+    R[:,2,0] = 2*qx*qz - 2*qy*qw
+    R[:,2,1] = 2*qy*qz + 2*qx*qw
+    R[:,2,2] = 1 - 2*qx**2 - 2*qy**2
+
+    if _initial_ndim == 1:
+        return R[0]
+    else:
+        return R
