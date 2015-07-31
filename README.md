@@ -1,2 +1,2 @@
-# KingKong
-Kinematic consensus of stellar orbits
+# StrömeFinden
+Find the streams!
