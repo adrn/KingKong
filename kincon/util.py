@@ -89,4 +89,4 @@ def random_quaternion(size=1):
     y = np.cos(t1)*s1
     z = np.sin(t2)*s2
 
-    return np.vstack((w,x,y,z))
+    return np.vstack((w,x,y,z)).T
