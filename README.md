@@ -1,2 +1,2 @@
-# StrömeFinden
-Find the streams!
+# Kinematic Consensus
+...as a service
