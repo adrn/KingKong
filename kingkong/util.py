@@ -15,6 +15,9 @@ class Quaternion(object):
     """
     Quaternions for 3D rotations.
 
+    This is largely thanks to Jake Vanderplas:
+    https://jakevdp.github.io/blog/2012/11/24/simple-3d-visualization-in-matplotlib/
+
     Parameters
     ----------
     wxyz : array_like
@@ -55,6 +58,7 @@ class Quaternion(object):
                                  + prod[2, 0] + prod[3, 1]),
                                 (prod[0, 3] + prod[1, 2]
                                  - prod[2, 1] + prod[3, 0])])
+
     @property
     def v_theta(self):
         """
