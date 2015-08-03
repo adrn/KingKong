@@ -9,9 +9,12 @@ import numpy as np
 import scipy.optimize as so
 import scipy.integrate as si
 
-# Project
+# HACK
+import gary.potential as gp
+from gary.units import galactic
+potential = gp.LogarithmicPotential(v_c=np.sqrt(2), r_h=0., q1=1., q2=1., q3=1., units=galactic)
 
-__all__ = ['radial_periods']
+__all__ = ['potential', 'radial_periods']
 
 def radial_periods(potential, w0):
     """
@@ -51,7 +54,7 @@ def radial_periods(potential, w0):
         xyz[:,0] = r
         return 1/np.sqrt(2*(E-potential.value(xyz)) - L**2/r**2)
 
-    periods = 2*np.array([si.quad(integrand, peri, 1., args=(EE, LL))[0]
-                          for peri,EE,LL in zip(pericenters,E,L)])
+    periods = 2*np.array([si.quad(integrand, peri, apo, args=(EE, LL))[0]
+                          for peri,apo,EE,LL in zip(pericenters,w0[:,0],E,L)])
 
     return periods
