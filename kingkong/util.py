@@ -24,7 +24,9 @@ class Quaternion(object):
         A quaternion or array of quaternions. Ordere is assumed to be ``(w,x,y,z)``.
     """
     def __init__(self, wxyz):
-        self.wxyz = np.atleast_2d(wxyz).astype(float)
+        self.wxyz = np.array(wxyz).astype(float)
+        if self.wxyz.ndim > 1:
+            raise NotImplementedError("Doesn't yet support array quaternions.")
 
     @classmethod
     def from_v_theta(cls, v, theta):
@@ -42,7 +44,7 @@ class Quaternion(object):
         return cls(q)
 
     def __repr__(self):
-        return "Quaternion:\n" + self.q.__repr__()
+        return "Quaternion:\n" + self.wxyz.__repr__()
 
     def __str__(self):
         return "Quaternion"
@@ -65,12 +67,12 @@ class Quaternion(object):
         Return the ``(v, theta)`` equivalent of the (normalized) quaternion.
         """
         # compute theta
-        norm = np.sqrt((self.wxyz ** 2).sum(0))
+        norm = np.sqrt(np.sum(self.wxyz**2))
         theta = 2 * np.arccos(self.wxyz[0] / norm)
 
         # compute the unit vector
-        v = np.array(self.wxyz[1:], order='F', copy=True)
-        v /= np.sqrt(np.sum(v ** 2, 0))
+        v = np.array(self.wxyz[1:])
+        v = v / np.sqrt(np.sum(v**2))
 
         return v, theta
 
@@ -94,7 +96,7 @@ class Quaternion(object):
                           v[2] * v[2] * (1. - c) + c]])
 
     @classmethod
-    def random(cls, size=1):
+    def random(cls, size=None):
         """
         Randomly sample a Quaternion from a distribution uniform in
         3D rotation angles.
@@ -108,6 +110,9 @@ class Quaternion(object):
 
         """
 
+        if size is not None:
+            raise NotImplementedError("Setting the size not yet supported.")
+
         s = np.random.uniform(size=size)
         s1 = np.sqrt(1 - s)
         s2 = np.sqrt(s)
@@ -119,4 +124,5 @@ class Quaternion(object):
         y = np.cos(t1)*s1
         z = np.sin(t2)*s2
 
-        return cls(np.vstack((w,x,y,z)).T)
+        return cls(np.array([w,x,y,z]))
+        # return cls(np.vstack((w,x,y,z)).T)
