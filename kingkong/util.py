@@ -79,7 +79,7 @@ class Quaternion(object):
         """
         Return the rotation matrix of the (normalized) quaternion
         """
-        v, theta = self.v_theta()
+        v, theta = self.v_theta
         c = np.cos(theta)
         s = np.sin(theta)
 
