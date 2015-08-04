@@ -9,10 +9,12 @@ __author__ = "adrn <adrn@astro.columbia.edu>"
 # Third-party
 import numpy as np
 import gary.dynamics as gd
+from scipy.optimize.slsqp import approx_jacobian
 
 # Project
 from .core import potential, radial_periods
 from .util import Quaternion
+from .coordinates import galactocentric_to_heliocentric, cartesian_to_spherical
 
 __all__ = ['MockStream']
 
@@ -63,6 +65,25 @@ class MockStream(object):
         # get rotation matrix from quaternion
         R = self.quaternion.rotation_matrix
         self.X = np.vstack((R.dot(w[:,:3].T), R.dot(w[:,3:].T))).T
+        self.Y = cartesian_to_spherical(galactocentric_to_heliocentric(self.X))
+        self.K = len(self.X)
+
+    def observed_variances(self, x_spread=0.01, v_spread=0.001):
+        """
+        Spread in position = 10 pc, spread in velocity = 1 km/s.
+        """
+        VX = np.array([x_spread,x_spread,x_spread,
+                       v_spread,v_spread,v_spread])
+
+        func = lambda x: cartesian_to_spherical(galactocentric_to_heliocentric(x))
+
+        VY = np.zeros_like(self.Y)
+        for k in range(self.K):
+            J = approx_jacobian(self.X[k], func, 1E-4)
+            cov = np.diag(VX)
+            VY[k] = np.diag(J.dot(cov).dot(J.T))
+
+        return VY
 
     def plot(self, **kwargs):
         """
@@ -76,3 +97,8 @@ class MockStream(object):
 
         fig = gd.plot_orbits(self.X, **kwargs)
         return fig
+
+class StreamData(object):
+
+    def __init__(self, Y, VY):
+        pass
