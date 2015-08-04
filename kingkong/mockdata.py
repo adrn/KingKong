@@ -35,7 +35,7 @@ class MockStream(object):
     """
     def __init__(self, r0, v0=None,
                  quaternion=None,
-                 nperiods=1.5, t0=0., nsteps_per_period=128):
+                 phi0=0., nsteps_per_period=128):
 
         self.r0 = float(r0)
         self.v0 = float(v0)
@@ -46,16 +46,19 @@ class MockStream(object):
             quaternion = Quaternion.random()
         self.quaternion = quaternion
 
-        if t0 != 0.:
-            raise NotImplementedError()
-
         # compute radial periods for orbit
-        periods = radial_periods(potential, self._w0)
-        dt = periods[0] / nsteps_per_period
+        period = radial_periods(potential, self._w0)[0]
+        dt = period / nsteps_per_period
 
         # integrate the orbit
-        t,w = potential.integrate_orbit(self._w0, dt=dt, nsteps=int(nperiods*periods[0]/dt))
-        w = w[:,0]
+        nperiods = 2.
+        t,w = potential.integrate_orbit(self._w0, dt=dt, nsteps=int(nperiods*period/dt))
+
+        t1 = phi0*period / (2*np.pi)
+        t2 = t1 + period
+        ix1 = np.abs(t-t1).argmin()
+        ix2 = np.abs(t-t2).argmin()
+        w = w[ix1:ix2,0]
 
         # get rotation matrix from quaternion
         R = self.quaternion.rotation_matrix
@@ -73,6 +76,3 @@ class MockStream(object):
 
         fig = gd.plot_orbits(self.X, **kwargs)
         return fig
-
-def sample_isothermal():
-    pass
