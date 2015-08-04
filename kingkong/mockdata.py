@@ -16,7 +16,7 @@ from .core import potential, radial_periods
 from .util import Quaternion
 from .coordinates import galactocentric_to_heliocentric, cartesian_to_spherical
 
-__all__ = ['MockStream', 'StreamData']
+__all__ = ['MockStream', 'Data']
 
 class MockStream(object):
 
@@ -115,7 +115,7 @@ class MockStream(object):
 
         return chisq_nk
 
-class StreamData(object):
+class Data(object):
 
     def __init__(self, Y, VY):
         self.Y = Y
