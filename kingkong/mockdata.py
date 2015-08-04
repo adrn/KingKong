@@ -16,7 +16,7 @@ from .core import potential, radial_periods
 from .util import Quaternion
 from .coordinates import galactocentric_to_heliocentric, cartesian_to_spherical
 
-__all__ = ['MockStream']
+__all__ = ['MockStream', 'StreamData']
 
 class MockStream(object):
 
@@ -98,7 +98,23 @@ class MockStream(object):
         fig = gd.plot_orbits(self.X, **kwargs)
         return fig
 
+    def compute_statistic(self, streamdata):
+        """
+        TODO:
+        """
+
+        Y = self.Y
+        Y_obs = streamdata.Y
+
+        VY = self.observed_variances
+        VY_obs = streamdata.VY
+
+        chisq_nk = np.sum(((Y[None] - Y_obs[:,None])**2.) / (VY[None] + VY_obs[:,None]), axis=-1)
+
+        return chisq_nk
+
 class StreamData(object):
 
     def __init__(self, Y, VY):
-        pass
+        self.Y = Y
+        self.VY = VY
