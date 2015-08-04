@@ -98,15 +98,17 @@ class MockStream(object):
         fig = gd.plot_orbits(self.X, **kwargs)
         return fig
 
-    def compute_statistic(self, streamdata):
+    def compute_statistic(self, streamdata, **kwargs):
         """
         TODO:
+
+        kwargs passed through to observed_variances()
         """
 
         Y = self.Y
         Y_obs = streamdata.Y
 
-        VY = self.observed_variances
+        VY = self.observed_variances(**kwargs)
         VY_obs = streamdata.VY
 
         chisq_nk = np.sum(((Y[None] - Y_obs[:,None])**2.) / (VY[None] + VY_obs[:,None]), axis=-1)
