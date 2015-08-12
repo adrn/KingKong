@@ -43,10 +43,9 @@ class MockStream(object):
         self.v0 = float(v0)
         self._w0 = np.array([self.r0,0,0, 0,self.v0,0])
 
-        if quaternion is None:
-            # sample a random rotation matrix using Quaternions, if none provided
-            quaternion = Quaternion.random()
         self.quaternion = quaternion
+        # if quaternion is not None:
+        #     raise NotImplementedError()
 
         # compute radial periods for orbit
         period = radial_periods(potential, self._w0)[0]
@@ -63,7 +62,10 @@ class MockStream(object):
         w = w[ix1:ix2,0]
 
         # get rotation matrix from quaternion
-        R = self.quaternion.rotation_matrix
+        if quaternion is None:
+            R = np.eye(3)
+        else:
+            R = self.quaternion.rotation_matrix
         self.X = np.vstack((R.dot(w[:,:3].T), R.dot(w[:,3:].T))).T
         self.Y = cartesian_to_spherical(galactocentric_to_heliocentric(self.X))
         self.K = len(self.X)
