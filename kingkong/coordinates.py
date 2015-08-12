@@ -61,6 +61,10 @@ def cartesian_to_spherical(X):
     l = np.arctan2(xyz[1], xyz[0]) % (2*np.pi)
     b = np.arctan2(xyz[2], dxy)
 
+    assert np.all(d > 0.)
+    assert np.all((l >= 0.) & (l < (2*np.pi)))
+    assert np.all((b >= (-0.5*np.pi)) & (b <= (0.5*np.pi)))
+
     # radial velocity
     vr = np.sum(xyz * vxyz, axis=0) / d
 
@@ -84,6 +88,10 @@ def spherical_to_cartesian(Y):
     Y = np.array(Y)
     l,b,d = Y[...,:3].T
     mu_l_cosb,mu_b,vr = Y[...,3:].T
+
+    assert np.all(d > 0.)
+    assert np.all((l >= 0.) & (l < (2*np.pi)))
+    assert np.all((b >= (-0.5*np.pi)) & (b <= (0.5*np.pi)))
 
     vl = d*mu_l_cosb
     vb = d*mu_b
