@@ -44,8 +44,6 @@ class MockStream(object):
         self._w0 = np.array([self.r0,0,0, 0,self.v0,0])
 
         self.quaternion = quaternion
-        # if quaternion is not None:
-        #     raise NotImplementedError()
 
         # compute radial periods for orbit
         period = radial_periods(potential, self._w0)[0]
