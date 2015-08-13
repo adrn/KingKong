@@ -68,7 +68,7 @@ class MockStream(object):
         self.Y = cartesian_to_spherical(galactocentric_to_heliocentric(self.X))
         self.K = len(self.X)
 
-    def observed_variances(self, x_spread=0.01, v_spread=0.001):
+    def intrinsic_variances_heliocentric(self, x_spread=0.01, v_spread=0.001):
         """
         Spread in position = 10 pc, spread in velocity = 1 km/s.
         """
@@ -102,13 +102,13 @@ class MockStream(object):
         """
         TODO:
 
-        kwargs passed through to observed_variances()
+        kwargs passed through to intrinsic_variances_heliocentric()
         """
 
         Y = self.Y
         Y_obs = streamdata.Y
 
-        VY = self.observed_variances(**kwargs)
+        VY = self.intrinsic_variances_heliocentric(**kwargs)
         VY_obs = streamdata.VY
 
         chisq_nk = np.sum(((Y[None] - Y_obs[:,None])**2.) / (VY[None] + VY_obs[:,None]), axis=-1)
