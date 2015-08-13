@@ -69,7 +69,7 @@ def cartesian_to_spherical(X):
     vr = np.sum(xyz * vxyz, axis=0) / d
 
     mu_l_cosb = (xyz[0]*vxyz[1] - vxyz[0]*xyz[1]) / dxy**2 * np.cos(b)
-    mu_b = (xyz[2]*(xyz[0]*vxyz[0] + xyz[1]*vxyz[1]) - dxy**2*vxyz[2]) / d**2 / dxy
+    mu_b = -(xyz[2]*(xyz[0]*vxyz[0] + xyz[1]*vxyz[1]) - dxy**2 * vxyz[2]) / d**2 / dxy
 
     Y = np.zeros_like(X)
     Y[...,0] = l.T
