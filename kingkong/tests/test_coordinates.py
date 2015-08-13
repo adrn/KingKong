@@ -11,7 +11,8 @@ import matplotlib.pyplot as pl
 import numpy as np
 
 # Project
-from ..coordinates import cartesian_to_spherical, spherical_to_cartesian
+from ..coordinates import (cartesian_to_spherical, spherical_to_cartesian,
+                           galactocentric_to_heliocentric, heliocentric_to_galactocentric)
 
 n = 128
 
@@ -32,3 +33,16 @@ def test_round_trip_sph_car():
     X = spherical_to_cartesian(sph)
     sph2 = cartesian_to_spherical(X)
     np.testing.assert_allclose(sph, sph2)
+
+def test_round_trip_gal_hel():
+
+    X = np.random.uniform(-10,10,size=(n,6))
+    X[:,:3] /= 1000.
+
+    hel_X = galactocentric_to_heliocentric(X)
+    gal_X = heliocentric_to_galactocentric(hel_X)
+    np.testing.assert_allclose(gal_X, X)
+
+    Y = cartesian_to_spherical(galactocentric_to_heliocentric(X))
+    X2 = heliocentric_to_galactocentric(spherical_to_cartesian(Y))
+    np.testing.assert_allclose(X, X2)
