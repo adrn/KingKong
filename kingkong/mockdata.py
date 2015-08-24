@@ -73,7 +73,7 @@ class MockStream(object):
         Spread in position = 10 pc, spread in velocity = 1 km/s.
         """
         VX = np.array([x_spread,x_spread,x_spread,
-                       v_spread,v_spread,v_spread])
+                       v_spread,v_spread,v_spread])**2.
 
         func = lambda x: cartesian_to_spherical(galactocentric_to_heliocentric(x))
 
@@ -111,8 +111,15 @@ class MockStream(object):
         VY = self.intrinsic_variances_heliocentric(**kwargs)
         VY_obs = streamdata.VY
 
-        chisq_nk = np.sum(((Y[None] - Y_obs[:,None])**2.) / (VY[None] + VY_obs[:,None]), axis=-1)
+        assert Y.shape == (self.K,6)
+        assert Y_obs.shape == (len(streamdata),6) # HACK
+        assert VY.shape == (self.K,6)
+        assert VY_obs.shape == (len(streamdata),6) # HACK
+        chisq_nkj = ((Y[None] - Y_obs[:,None])**2.) / (VY[None] + VY_obs[:,None])
 
+        assert chisq_nkj.shape == (len(streamdata), self.K, 6)
+        chisq_nk = chisq_nkj.sum(axis=-1)
+        assert chisq_nk.shape == (len(streamdata), self.K)
         return chisq_nk
 
 class Data(object):
@@ -120,3 +127,6 @@ class Data(object):
     def __init__(self, Y, VY):
         self.Y = Y
         self.VY = VY
+
+    def __len__(self):
+        return self.Y.shape[0]
